@@ -1,5 +1,18 @@
 import unreal
 
+########## CHANGE ME ####################
+src_location = "/YetAnotherClanMech/Objects/Mechs/Direwolf/"
+#src_location = "/SpecialVariants/Objects/Mechs/Warhammer/"
+
+srcVariant = "DWF-LW"
+destVariants = [
+	"DWF-UV"
+]
+prefix = 'YACM_'
+use_sub_folders = True
+########## CHANGE ME ####################
+
+
 def get_asset(path):
 	ad = unreal.EditorAssetLibrary.find_asset_data(path)
 	o = unreal.AssetRegistryHelpers.get_asset(ad)
@@ -9,9 +22,6 @@ def get_primary_asset_id(path):
 	return unreal.SystemLibrary.get_primary_asset_id_from_object(unreal.AssetRegistryHelpers.get_asset(unreal.EditorAssetLibrary.find_asset_data(path)))
 
 def clone_variant(srcVariant, destVariant):
-	src_location = "/YetAnotherClanMech/Objects/Mechs/Phoenixhawk_IIC/"
-	#src_location = "/SpecialVariants/Objects/Mechs/Warhammer/"
-	use_sub_folders = False
 	dest_location = src_location
 
 	with unreal.ScopedEditorTransaction("Clone Variant Script") as trans:
@@ -23,41 +33,33 @@ def clone_variant(srcVariant, destVariant):
 			loadout_path = loadout_path + 'Loadout/'
 			uc_path = uc_path + 'UnitCard/'
 			
-		unreal.EditorAssetLibrary.duplicate_asset(mda_path + srcVariant + "_MDA", dest_location + destVariant + "_MDA")
-		unreal.EditorAssetLibrary.duplicate_asset(uc_path + srcVariant + "_UnitCard", dest_location + destVariant + "_UnitCard")
-		unreal.EditorAssetLibrary.duplicate_asset(loadout_path + srcVariant + "_Loadout", dest_location + destVariant + "_Loadout")
-		destMda = get_asset(mda_path + destVariant + "_MDA")
-		destLoadout = get_asset(loadout_path + destVariant + "_Loadout")
-		destCard = get_asset(uc_path + destVariant + "_UnitCard")
+		dest_mda_path = mda_path + prefix + destVariant + "_MDA"
+		dest_loadout_path = loadout_path + prefix + destVariant + "_Loadout"
+		dest_uc_path = uc_path + prefix + destVariant + "_UnitCard"
 		
-		#unreal.log(destMda.mech_data.default_mech)
-		#unreal.log(dir(destMda.mech_data.default_mech))
-		#unreal.log(destLoadout)
-		#unreal.log(dir(destLoadout))
-		#unreal.log(get_primary_asset_id(dest_location + destVariant + "_Loadout"))
-		destMda.mech_data.set_editor_property("variant_name", destVariant);
-		destMda.mech_data.default_mech.set_editor_property("id", get_primary_asset_id(dest_location + destVariant + "_Loadout"))
+		unreal.EditorAssetLibrary.duplicate_asset(mda_path + prefix + srcVariant + "_MDA", dest_mda_path)
+		unreal.EditorAssetLibrary.duplicate_asset(uc_path + prefix + srcVariant + "_UnitCard", dest_uc_path)
+		unreal.EditorAssetLibrary.duplicate_asset(loadout_path + prefix + srcVariant + "_Loadout", dest_loadout_path)
+		
+		destMda = get_asset(dest_mda_path)
+		destLoadout = get_asset(dest_loadout_path)
+		destCard = get_asset(dest_uc_path)
+		
+		#unreal.log(help(destMda.mech_data.get_editor_property("mech_type")))
+		#unreal.log(dir(destMda.mech_data.get_editor_property("mech_type")))
+		#tag = str(destMda.mech_data.get_editor_property("mech_type").get_editor_property('tag_name')).replace(srcVariant, destVariant)
+		#unreal.log(tag)
+		#new_tag = unreal.GameplayTag()
+		#new_tag.set_editor_property('tag_name', tag)
+		#destMda.mech_data.set_editor_property("mech_type", new_tag)
+		
+		destMda.mech_data.set_editor_property("variant_name", destVariant)
+		destMda.mech_data.default_mech.set_editor_property("id", get_primary_asset_id(dest_loadout_path))
 
-		destLoadout.mech_loadout.mech_data_asset_id.set_editor_property("id", get_primary_asset_id(dest_location + destVariant + "_MDA"))
+		destLoadout.mech_loadout.mech_data_asset_id.set_editor_property("id", get_primary_asset_id(dest_mda_path))
 		destCard.unit_card.set_editor_property("mech_loadout_template", destMda.mech_data.default_mech)
 		
-		#unreal.log(dir(o.mech_data))
-		#unreal.log(o.mech_data.variant_name)
-		#unreal.log(o.mech_data.default_mech)
-		#unreal.log(get_primary_asset_id(asset_location + srcVariant + "_Loadout"))
 
-
-srcVariant = "PXH-IIC-2"
-destVariants = [
-	"PXH-IIC-3",
-	"PXH-IIC-4",
-	"PXH-IIC-5",
-	"PXH-IIC-6",
-	"PXH-IIC-7",
-	"PXH-IIC-8",
-	"PXH-IIC-9",
-	"PXH-IIC-10"
-]
 
 for v in destVariants:
 	clone_variant(srcVariant, v)

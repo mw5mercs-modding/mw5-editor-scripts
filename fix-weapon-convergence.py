@@ -2,6 +2,7 @@ import unreal
 
 ####### SCRIPT CONFIG ##############
 asset_locations = [
+	'/YetAnotherClanMech/Objects/Mechs/BlackLanner/Model/Weapons/',
 	'/YetAnotherClanMech/Objects/Mechs/Cougar/Model/Weapons/',
 	'/YetAnotherClanMech/Objects/Mechs/Nova/Model/Weapons/',
 	'/YetAnotherClanMech/Objects/Mechs/Direwolf/Model/Weapons/',
@@ -12,6 +13,7 @@ asset_locations = [
 ]
 tmp = 'D:/Downloads/MW5/tmp/weapon-skms'
 ignore_missile = True
+ignore_scale = True
 ####### /SCRIPT CONFIG ##############
 
 
@@ -33,7 +35,8 @@ def update_skm_import_translation(weapon_bp_def):
 	#unreal.log(help(skm_asset.get_editor_property('asset_import_data')))
 	skm_asset.get_editor_property('asset_import_data').set_editor_property('import_translation', weapon_bp_def.get_editor_property('relative_location'))
 	skm_asset.get_editor_property('asset_import_data').set_editor_property('import_rotation', weapon_bp_def.get_editor_property('relative_rotation'))
-	skm_asset.get_editor_property('asset_import_data').set_editor_property('import_uniform_scale', weapon_bp_def.get_editor_property('relative_scale3d').x)
+	if not ignore_scale:
+		skm_asset.get_editor_property('asset_import_data').set_editor_property('import_uniform_scale', weapon_bp_def.get_editor_property('relative_scale3d').x)
 
 
 def reset_weapon_transform(weapon_bp_def):
@@ -41,7 +44,8 @@ def reset_weapon_transform(weapon_bp_def):
 	weapon_bp_def.get_editor_property('relative_rotation').yaw = 0.0
 	weapon_bp_def.get_editor_property('relative_rotation').pitch = 0.0
 	weapon_bp_def.get_editor_property('relative_rotation').roll = 0.0
-	weapon_bp_def.set_editor_property('relative_scale3d', unreal.Vector(1.0,1.0,1.0))
+	if not ignore_scale:
+		weapon_bp_def.set_editor_property('relative_scale3d', unreal.Vector(1.0,1.0,1.0))
 
 
 def clone_skm_if_necessary(asset_path):
@@ -87,9 +91,9 @@ def has_non_default_transform(weapon_bp_def):
 		or weapon_bp_def.get_editor_property('relative_rotation').pitch != 0.0 \
 		or weapon_bp_def.get_editor_property('relative_rotation').yaw != 0.0 \
 		or weapon_bp_def.get_editor_property('relative_rotation').roll != 0.0 \
-		or weapon_bp_def.get_editor_property('relative_scale3d').x != 1.0 \
-		or weapon_bp_def.get_editor_property('relative_scale3d').y != 1.0 \
-		or weapon_bp_def.get_editor_property('relative_scale3d').z != 1.0
+		or (not ignore_scale and weapon_bp_def.get_editor_property('relative_scale3d').x != 1.0) \
+		or (not ignore_scale and weapon_bp_def.get_editor_property('relative_scale3d').y != 1.0) \
+		or (not ignore_scale and weapon_bp_def.get_editor_property('relative_scale3d').z != 1.0)
 
 
 def can_weapon_convergance_be_fixed(weapon_bp_def):
@@ -98,7 +102,7 @@ def can_weapon_convergance_be_fixed(weapon_bp_def):
 	
 	Since the import settings only allow for a single scaling factor, that is what we verify
 	"""
-	return weapon_bp_def.get_editor_property('relative_scale3d').x == weapon_bp_def.get_editor_property('relative_scale3d').y == weapon_bp_def.get_editor_property('relative_scale3d').z
+	return ignore_scale or weapon_bp_def.get_editor_property('relative_scale3d').x == weapon_bp_def.get_editor_property('relative_scale3d').y == weapon_bp_def.get_editor_property('relative_scale3d').z
 
 
 def export_weapon_skm(weapon_bp_def, tmp_dir):

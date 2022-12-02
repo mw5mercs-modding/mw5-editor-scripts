@@ -71,7 +71,7 @@ def fix_texture_references(texture_path, target_asset_ref, mech_name):
 	some_actor_cdo = unreal.get_default_object(blueprint)
 	for pos in positions:
 		old_name = str(some_actor_cdo.get_editor_property(pos).get_fname())
-		new_tex_p = texture_path + old_name.replace('Vulcan', mech_name)
+		new_tex_p = texture_path + old_name.replace('Cataphract', mech_name)
 		unreal.log('Replacing ' + old_name + ' with ' + new_tex_p)
 		new_tex = unreal.load_object(None, new_tex_p)
 		some_actor_cdo.set_editor_property(pos, new_tex)

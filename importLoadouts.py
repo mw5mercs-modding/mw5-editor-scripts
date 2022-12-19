@@ -1,3 +1,12 @@
+"""
+This script will find loadout assets in the given unreal folder. Then it will
+try to match the corresponding MDA asset ids to loadouts in the InstantAction.json.
+If found the loadout will be written into a tmp file and the loadout asset's import
+filename will be set to that file's path. Sadly directly importing is not supported yet.
+So after running this script all modified loadout assets should be selected, right click
+and "reimport".
+"""
+
 import unreal
 import json
 import os

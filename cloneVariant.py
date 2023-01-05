@@ -1,15 +1,18 @@
 import unreal
 
 ########## CHANGE ME ####################
-src_location = "/YetAnotherClanMech/Objects/Mechs/Direwolf/"
-#src_location = "/SpecialVariants/Objects/Mechs/Warhammer/"
+#src_location = "/YetAnotherClanMech/Objects/Mechs/Rifleman_IIC/"
+src_location = "/SpecialVariants/Objects/Mechs/Hammer/"
 
-srcVariant = "DWF-LW"
+srcVariant = "HMR-3M"
 destVariants = [
-	"DWF-UV"
+	[ "HMR-3C", 3056, 976 ],
+	[ "HMR-3P", 3060, 827 ],
+	[ "HMR-3S", 3054, 638 ]
 ]
-prefix = 'YACM_'
-use_sub_folders = True
+#prefix = 'YACM_'
+prefix = ''
+use_sub_folders = False
 ########## CHANGE ME ####################
 
 
@@ -21,8 +24,11 @@ def get_asset(path):
 def get_primary_asset_id(path):
 	return unreal.SystemLibrary.get_primary_asset_id_from_object(unreal.AssetRegistryHelpers.get_asset(unreal.EditorAssetLibrary.find_asset_data(path)))
 
-def clone_variant(srcVariant, destVariant):
+def clone_variant(srcVariant, dest_variant_stats):
 	dest_location = src_location
+	dest_variant = dest_variant_stats[0]
+	dest_year = dest_variant_stats[1]
+	dest_bv = dest_variant_stats[2]
 
 	with unreal.ScopedEditorTransaction("Clone Variant Script") as trans:
 		mda_path = src_location
@@ -33,9 +39,9 @@ def clone_variant(srcVariant, destVariant):
 			loadout_path = loadout_path + 'Loadout/'
 			uc_path = uc_path + 'UnitCard/'
 			
-		dest_mda_path = mda_path + prefix + destVariant + "_MDA"
-		dest_loadout_path = loadout_path + prefix + destVariant + "_Loadout"
-		dest_uc_path = uc_path + prefix + destVariant + "_UnitCard"
+		dest_mda_path = mda_path + prefix + dest_variant + "_MDA"
+		dest_loadout_path = loadout_path + prefix + dest_variant + "_Loadout"
+		dest_uc_path = uc_path + prefix + dest_variant + "_UnitCard"
 		
 		unreal.EditorAssetLibrary.duplicate_asset(mda_path + prefix + srcVariant + "_MDA", dest_mda_path)
 		unreal.EditorAssetLibrary.duplicate_asset(uc_path + prefix + srcVariant + "_UnitCard", dest_uc_path)
@@ -53,11 +59,13 @@ def clone_variant(srcVariant, destVariant):
 		#new_tag.set_editor_property('tag_name', tag)
 		#destMda.mech_data.set_editor_property("mech_type", new_tag)
 		
-		destMda.mech_data.set_editor_property("variant_name", destVariant)
+		destMda.mech_data.set_editor_property("variant_name", dest_variant)
 		destMda.mech_data.default_mech.set_editor_property("id", get_primary_asset_id(dest_loadout_path))
 
 		destLoadout.mech_loadout.mech_data_asset_id.set_editor_property("id", get_primary_asset_id(dest_mda_path))
 		destCard.unit_card.set_editor_property("mech_loadout_template", destMda.mech_data.default_mech)
+		destCard.unit_card.set_editor_property("battle_value", dest_bv)
+		destCard.unit_card.set_editor_property("intro_date", unreal.DateTime(dest_year, 1, 1))
 		
 
 

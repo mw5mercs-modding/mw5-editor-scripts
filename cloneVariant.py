@@ -66,7 +66,7 @@ def clone_variant(srcVariant, dest_variant_stats):
 		destMda.get_editor_property("mech_data").default_mech.set_editor_property("id", get_primary_asset_id(dest_loadout_path))
 
 		destLoadout.get_editor_property("mech_loadout").mech_data_asset_id.set_editor_property("id", get_primary_asset_id(dest_mda_path))
-		destCard.unit_card.get_editor_property("mech_loadout_template").set_editor_property("id", get_primary_asset_id(dest_mda_path))
+		destCard.unit_card.get_editor_property("mech_loadout_template").set_editor_property("id", get_primary_asset_id(dest_loadout_path))
 		destCard.unit_card.set_editor_property("battle_value", dest_bv)
 		destCard.unit_card.set_editor_property("intro_date", unreal.DateTime(dest_year, 1, 1))
 		

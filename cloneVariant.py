@@ -51,19 +51,22 @@ def clone_variant(srcVariant, dest_variant_stats):
 		destLoadout = get_asset(dest_loadout_path)
 		destCard = get_asset(dest_uc_path)
 		
-		#unreal.log(help(destMda.mech_data.get_editor_property("mech_type")))
-		#unreal.log(dir(destMda.mech_data.get_editor_property("mech_type")))
+		#unreal.log(destMda.get_editor_property("mech_data").get_editor_property("variant_name"))
+		#unreal.log(dir(destMda.mech_data.get_editor_property("variant_name")))
+		#unreal.log(destMda.mech_data.default_mech.get_editor_property("id"))
+		#unreal.log(type(destCard.unit_card.get_editor_property("mech_loadout_template")))
+		#unreal.log(type(destMda.mech_data.default_mech))
 		#tag = str(destMda.mech_data.get_editor_property("mech_type").get_editor_property('tag_name')).replace(srcVariant, destVariant)
 		#unreal.log(tag)
 		#new_tag = unreal.GameplayTag()
 		#new_tag.set_editor_property('tag_name', tag)
 		#destMda.mech_data.set_editor_property("mech_type", new_tag)
 		
-		destMda.mech_data.set_editor_property("variant_name", dest_variant)
-		destMda.mech_data.default_mech.set_editor_property("id", get_primary_asset_id(dest_loadout_path))
+		destMda.get_editor_property("mech_data").set_editor_property("variant_name", unreal.Text(dest_variant))
+		destMda.get_editor_property("mech_data").default_mech.set_editor_property("id", get_primary_asset_id(dest_loadout_path))
 
-		destLoadout.mech_loadout.mech_data_asset_id.set_editor_property("id", get_primary_asset_id(dest_mda_path))
-		destCard.unit_card.set_editor_property("mech_loadout_template", destMda.mech_data.default_mech)
+		destLoadout.get_editor_property("mech_loadout").mech_data_asset_id.set_editor_property("id", get_primary_asset_id(dest_mda_path))
+		destCard.unit_card.get_editor_property("mech_loadout_template").set_editor_property("id", get_primary_asset_id(dest_mda_path))
 		destCard.unit_card.set_editor_property("battle_value", dest_bv)
 		destCard.unit_card.set_editor_property("intro_date", unreal.DateTime(dest_year, 1, 1))
 		
